@@ -31,7 +31,7 @@ ORDER BY total_amount DESC
 #### Steps
 - Use **INNER JOIN** to merge `dannys_diner.sales` & `dannys_diner.menu` tables through their `product_id` column.
 - Use **SUM** to calculate total sales by each customer.
-- Group the aggregated results by `customer_id`.
+- Group the aggregated results by `s.customer_id`.
 - Sort by `total_amount` in descending order to see which customers have spent the most.
 
 #### Answer
@@ -92,7 +92,7 @@ WHERE rk = 1
 ````
 #### Steps
 - Create a Common Table Expression **(CTE)** called `ranking_by_date`, inside this cte we create a new column `rk` and calculate the row number using ROW_NUMBER() windows function.
-- Out of the CTE, in the other query select the relevant columns, then filter in the **WHERE** clause by the `rk` column where the rows are equal to 1, which represents the first row after partitioning by `customer_id`.
+- Out of the CTE, in the other query select the relevant columns, then filter in the **WHERE** clause by the `rk` column where the rows are equal to 1, which represents the first row after partitioning by `rd.customer_id`.
 
 #### Answer
 | customer_id | product_name |
@@ -119,7 +119,7 @@ GROUP BY m.product_name
 ORDER BY times_purchased DESC
 ````
 #### Steps
-- Use **COUNT** aggregation function on `product_id` to get the number of times a product was purchased, and **ORDER BY** our created column `times_purchased` in descending order.
+- Use **COUNT** aggregation function on `s.product_id` to get the number of times a product was purchased, and **ORDER BY** our created column `times_purchased` in descending order.
 - At this point I decided not to add **LIMIT 1** at the end of the query, which would allow us to see only the most purchased product **(ramen -> 8)**, I left it like this to see the subsequent products.
 
 #### Answer
@@ -206,7 +206,7 @@ ORDER BY customer_id ASC
 - In CTE `joining_the_item` join the tables `cte` and `dannys_diner.menu`, then filter in WHERE clause by the column `rk` where the rows are equal to 1, select the desired columns.
 - In the outer query order the results by `customer_id` column in ascending order.
 
-**Note:** I know that this particular case can be done exactly the same as case #5, but I am practicing what can be done with CTE's.
+>**Note:** I know that this particular case can be done exactly the same as case #5, but I am practicing what can be done with CTE's.
 
 #### Answer
 | customer_id | product_name |
@@ -278,8 +278,12 @@ GROUP BY s.customer_id
 ORDER BY s.customer_id ASC
 ````
 #### Steps
-- a
-- b
+- Select `customer_id` column, calculate the count with `s.*`, or if you want to be more specific use `s.product_id` to get the total purchases as items_bought and calculate the sum of `menu.price` as total_amount_spent.
+- Join the tables `dannys_diner.sales` and `dannys_diner.menu` through `s.product_id` column.
+- Join the tables `dannys_diner.sales` and `dannys_diner.Members` through `s.customer_id` column.
+- Filter with a condition `(s.order_date < m.join_date)` in where clause.
+- Group results by `s.customer_id` column.
+- Sort the results by `s.customer_id` in ascending order.
 
 #### Answer
 | customer_id | items_bought | total_amount_spent |
@@ -309,8 +313,12 @@ GROUP BY s.customer_id
 ORDER BY user_points DESC
 ````
 #### Steps
-- a
-- b
+Let's break down the question to understand the point about how to calculate the points for each user.
+- Each $1 spent = 10 points, in the case of the **sushi** product you get 2x points, so $1 spent = 20 points.
+- Here's how the calculation is performed using a conditional **CASE statement**:
+	- If `product_id = 'sushi'`, multiply every $1 by 20 points.
+	- Otherwise, multiply $1 by 10 points.
+- Then calculates the sum of the user_points for each user
 
 #### Answer
 | customer_id | user_points  |
@@ -351,9 +359,18 @@ WHERE s.order_date >= mw.join_date
 GROUP BY s.customer_id
 ORDER BY user_points DESC
 ````
+#### Understanding the problem
+- Day 1-7 the client becomes a member, each $1 spent = 20 on all items.
+- Day 8 to the last day of January, each $1 spent = 10 on all items.
+  
 #### Steps
-- a
-- b
+- Create a CTE called `members_week`, calculate `complete_week` by adding 6 days to join_date 
+- Join the tables `dannys_diner.sales` and `dannys_diner.menu` through `s.product_id` column.
+- Join the tables `dannys_diner.sales` and `members_week` through `mw.customer_id` column.
+- Filter with a condition `(s.order_date >= mw.join_date)` in where clause to ensure that the date of purchase is the same day or after he has become a member and filter by January month `EXTRACT(MONTH FROM s.order_date) = 1`
+- Then calculates the sum of `user_points` for each user
+- Group results by `s.customer_id` column.
+- Sort the results by `user_points` in descending order.
 
 #### Answer
 | customer_id | user_points |
