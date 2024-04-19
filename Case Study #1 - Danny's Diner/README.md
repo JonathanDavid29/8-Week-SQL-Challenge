@@ -29,8 +29,10 @@ GROUP BY s.customer_id
 ORDER BY total_amount DESC
 ````
 #### Steps
-- a
-- b
+- Use **INNER JOIN** to merge `dannys_diner.sales` & `dannys_diner.menu` tables through their `product_id` column.
+- Use **SUM** to calculate total sales by each customer.
+- Group the aggregated results by `customer_id`.
+- Sort by `total_amount` in descending order to see which customers have spent the most.
 
 #### Answer
 | customer_id | total_sales |
@@ -54,8 +56,8 @@ FROM dannys_diner.sales
 GROUP BY customer_id
 ````
 #### Steps
-- a
-- b
+- Use **COUNT** to count the number of days visited, but here it is important to apply the **DISTINCT** keyword to avoid duplicating the count of a day in which the customer has visited the establishment more than once.
+- Group the aggregated results by `customer_id`.
 
 #### Answer
 | customer_id | days_visited |
@@ -89,8 +91,8 @@ INNER JOIN dannys_diner.menu AS m
 WHERE rk = 1
 ````
 #### Steps
-- a
-- b
+- Create a Common Table Expression **(CTE)** called `ranking_by_date`, inside this cte we create a new column `rk` and calculate the row number using ROW_NUMBER() windows function.
+- Out of the CTE, in the other query select the relevant columns, then filter in the **WHERE** clause by the `rk` column where the rows are equal to 1, which represents the first row after partitioning by `customer_id`.
 
 #### Answer
 | customer_id | product_name |
@@ -117,8 +119,8 @@ GROUP BY m.product_name
 ORDER BY times_purchased DESC
 ````
 #### Steps
-- a
-- b
+- Use **COUNT** aggregation function on `product_id` to get the number of times a product was purchased, and **ORDER BY** our created column `times_purchased` in descending order.
+- At this point I decided not to add **LIMIT 1** at the end of the query, which would allow us to see only the most purchased product **(ramen -> 8)**, I left it like this to see the subsequent products.
 
 #### Answer
 | product_name | times_purchased |
@@ -153,8 +155,10 @@ FROM ranking_items
 WHERE rk = 1
 ````
 #### Steps
-- a
-- b
+- Create a CTE called `ranking_items`, join the tables `dannys_diner.sales` and `dannys_diner.menu` by the common column `product_id`.
+- Group results by `customer_id` and `product_name`.
+- Create the `rk` column in which we will partition by `customer_id` and calculate the count with the `product_id` column for each guy, these results are sorted in descending order.
+- Out of the CTE, in the other query select the relevant columns, then filter in the WHERE clause by the `rk` column where the rows are equal to 1.
 
 #### Answer
 | customer_id | product_name |
@@ -198,8 +202,11 @@ FROM joining_the_item
 ORDER BY customer_id ASC
 ````
 #### Steps
-- a
-- b
+- Create 2 CTE, `cte` in which we rank the items and it does exactly the same as in the above problem, the difference is that we filter with a condition `(s.order_date >= m.join_date)` in where clause to get only the items purchased when the customer became a member.
+- In CTE `joining_the_item` join the tables `cte` and `dannys_diner.menu`, then filter in WHERE clause by the column `rk` where the rows are equal to 1, select the desired columns.
+- In the outer query order the results by `customer_id` column in ascending order.
+
+**Note:** I know that this particular case can be done exactly the same as case #5, but I am practicing what can be done with CTE's.
 
 #### Answer
 | customer_id | product_name |
@@ -237,8 +244,11 @@ FROM ranking_by_date
 WHERE rk = 1
 ````
 #### Steps
-- a
-- b
+- Create a CTE called `ranking_by_date`, select the relevant columns, create a new column `rk` and calculate the row number using the windows function **DENSE_RANK()** as it ranks us without leaving gaps between rows.
+- Join the tables `dannys_diner.sales` and `dannys_diner.Members` through `customer_id` column.
+- Join the tables `dannys_diner.sales` and `dannys_diner.menu` through `product_id` column.
+- Filter with a condition `(s.order_date < m.join_date)` in where clause.
+- Sort the results by `menu.product_name` in ascending order.
 
 #### Answer
 | customer_id | product_name |
