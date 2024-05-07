@@ -4,11 +4,11 @@
 
 ````sql
 SELECT
-  COUNT(pizza_id) AS orders
+	COUNT(pizza_id) AS orders
 FROM customer_orders_temp
 ````
 
-**Answer: **
+**Answer:**
 
 ![Captura de pantalla 2024-05-07 134056](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/a40bd18b-5636-4d7d-b7e1-2d3fc581d105)
 
@@ -24,7 +24,7 @@ SELECT
 FROM customer_orders_temp
 ````
 
-**Answer: **
+**Answer:**
 
 ![Captura de pantalla 2024-05-07 134726](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/c71963d0-4b5d-4c43-9a5a-7f2f41c3ff26)
 
@@ -44,7 +44,7 @@ GROUP BY runner_id
 ORDER BY succesful_orders DESC
 ````
 
-**Answer: **
+**Answer:**
 
 ![Captura de pantalla 2024-05-07 135046](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/b1d5e1d1-331a-4725-b487-a03a745ad2a9)
 
@@ -69,7 +69,7 @@ WHERE distance != 0
 GROUP BY pizza_names.pizza_name
 ````
 
-**Answer: **
+**Answer:**
 
 ![Captura de pantalla 2024-05-07 135858](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/f9c96f19-b1e6-49de-a6ab-1aa672195bdc)
 
@@ -92,7 +92,7 @@ GROUP BY customer_id, pizza_names.pizza_name
 ORDER BY customer_id ASC
 ````
 
-**Answer: **
+**Answer:**
 
 ![Captura de pantalla 2024-05-07 140403](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/21225282-dfe8-4729-a233-249c61f9642f)
 
@@ -123,7 +123,7 @@ SELECT
 FROM cte
 ````
 
-**Answer: **
+**Answer:**
 
 ![Captura de pantalla 2024-05-07 141110](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/d33e56c0-a049-4bbf-a3fe-9f9b689bf32f)
 
@@ -152,10 +152,12 @@ GROUP BY customer_id
 ORDER BY customer_id ASC
 ````
 
-**Answer: **
+**Answer:**
 
-![Captura de pantalla 2024-05-07 142816](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/5101e4ca-bd8e-416e-8d55-dd3ef6a7c617)
+![0](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/2c588e28-f3d4-4c44-ab7e-0e7f6e6149e3)
 
+- Customers with id **101** & **102** didn't make any ingredient modifications to their pizzas.
+- Customer with id **103**, **104** & **105** requested at least one change in their pizzas.
 
 ***
 
@@ -174,11 +176,11 @@ LEFT JOIN runner_orders_temp
 WHERE distance != 0
 ````
 
-**Answer: **
+**Answer:**
 
-![Captura de pantalla 2024-05-07 134056](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/a40bd18b-5636-4d7d-b7e1-2d3fc581d105)
+![1](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/071bddc1-79fc-48f3-9fda-55d445d92745)
 
-- Total pizzas ordered were **14**
+- Only 1 pizza was delivered that had exclusions and extras.
 
 ***
 
@@ -186,30 +188,39 @@ WHERE distance != 0
 
 ````sql
 SELECT
-  COUNT(pizza_id) AS orders
+  EXTRACT(HOUR FROM order_time) AS hour,
+  COUNT(order_id) pizzas_ordered_for_each_hour
 FROM customer_orders_temp
+GROUP BY EXTRACT(HOUR FROM order_time)
+ORDER BY hour ASC
 ````
 
 **Answer: **
 
-![Captura de pantalla 2024-05-07 134056](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/a40bd18b-5636-4d7d-b7e1-2d3fc581d105)
+![Captura de pantalla 2024-05-07 165501](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/c8de62d2-97bc-4df3-9577-f027459fe8a4)
 
-- Total pizzas ordered were **14**
+- Hours when most orders are placed is at **13:00** (1:00 pm), **18:00** (6:00 pm), **21:00** (9:00 pm), **23:00** (11:00 pm).
+- Hours when the least orders are placed is at **11:00** (11:00 am) and **19:00** (7:00 pm).
 
 ***
 
-### 10. How many pizzas were ordered?
+### 10. What was the volume of orders for each day of the week?
 
 ````sql
 SELECT
-  COUNT(pizza_id) AS orders
+  TO_CHAR(order_time + INTERVAL '2 DAYS','Day') AS week_day,
+  COUNT(order_id) AS orders
 FROM customer_orders_temp
+GROUP BY week_day
+ORDER BY week_day ASC
 ````
 
 **Answer: **
 
-![Captura de pantalla 2024-05-07 134056](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/a40bd18b-5636-4d7d-b7e1-2d3fc581d105)
+![Captura de pantalla 2024-05-07 170730](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/702f851b-0060-4019-8d8a-2a3add65bb14)
 
-- Total pizzas ordered were **14**
+- There are 5 pizzas ordered on Friday and Monday.
+- There are 3 pizzas ordered on Saturday.
+- There is 1 pizza ordered on Sunday.
 
 ***
