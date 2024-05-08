@@ -146,18 +146,18 @@ GROUP BY runner_orders_temp.runner_id, runner_orders_temp.distance, runner_order
 ````sql
 SELECT
     runner_id,
-    ROUND(100 * SUM(CASE 
+    CONCAT(ROUND(100 * SUM(CASE 
             WHEN distance != 0 THEN 1
             ELSE 0
-       END) / COUNT(*), 0) AS succesful_delivers
-FROM runner_orders_temp
+       END) / COUNT(*), 0),'%') AS succesful_delivers
+FROM runner_orders_tempp
 GROUP BY runner_id
-ORDER BY succesful_delivers DESC
+ORDER BY runner_id ASC
 ````
 
 **Answer:**
 
-![Captura de pantalla 2024-05-07 134056](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/a40bd18b-5636-4d7d-b7e1-2d3fc581d105)
+![Captura de pantalla 2024-05-08 173645](https://github.com/JonathanDavid29/8-Week-SQL-Challenge/assets/69162164/39baa0c2-c55e-4ddb-8f9a-d35fd0821334)
 
 - Runner 1 has 100% of succesful delivery.
 - Runner 2 has 75% of succesful delivery.
